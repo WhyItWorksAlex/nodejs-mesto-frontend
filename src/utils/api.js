@@ -129,7 +129,7 @@ class Api {
     }).then(getResponse);
   }
 }
-// Замените на адрес вашего бэкенда
+// Замените на адрес вашего бэкенда2
 const api = new Api("https://api.fishmanalex.students.nomorepartiesco.ru/");
 
 export default api;
