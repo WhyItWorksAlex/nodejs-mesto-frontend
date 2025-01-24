@@ -16,15 +16,12 @@ import InfoTooltip from "./InfoTooltip";
 import ProtectedRoute from "./ProtectedRoute";
 
 function App() {
-  const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] =
-    React.useState(false);
+  const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
-  const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] =
-    React.useState(false);
+  const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = React.useState(false);
   const [selectedCard, setSelectedCard] = React.useState(null);
   const [cards, setCards] = React.useState([]);
 
-  
   const [currentUser, setCurrentUser] = React.useState({});
 
   const [isInfoToolTipOpen, setIsInfoToolTipOpen] = React.useState(false);
@@ -35,23 +32,22 @@ function App() {
 
   const history = useHistory();
 
-
   React.useEffect(() => {
     const token = localStorage.getItem("jwt");
     if (token) {
       api
         .checkToken(token)
         .then((res) => {
-          console.log(res)
+          console.log(res);
           api.setToken(token);
           setEmail(res.email);
           setIsLoggedIn(true);
-          return api.getAppInfo()
+          return api.getAppInfo();
         })
         .then(([cardData, userData]) => {
-            setCurrentUser(userData);
-            setCards(cardData);
-            history.push("/");
+          setCurrentUser(userData);
+          setCards(cardData);
+          history.push("/");
         })
         .catch((err) => {
           localStorage.removeItem("jwt");
@@ -60,8 +56,6 @@ function App() {
     }
   }, [history]);
 
-
-  
   function handleEditProfileClick() {
     setIsEditProfilePopupOpen(true);
   }
@@ -111,9 +105,7 @@ function App() {
     api
       .changeLikeCardStatus(card._id, !isLiked)
       .then((newCard) => {
-        setCards((cards) =>
-          cards.map((c) => (c._id === card._id ? newCard : c))
-        );
+        setCards((cards) => cards.map((c) => (c._id === card._id ? newCard : c)));
       })
       .catch((err) => console.log(err));
   }
@@ -151,7 +143,8 @@ function App() {
       });
   }
 
-  function onLogin({ email, password }) {
+  async function onLogin({ email, password }) {
+    console.log(await api.login(email, password));
     api
       .login(email, password)
       .then((res) => {
@@ -166,15 +159,13 @@ function App() {
   }
 
   function onSignOut() {
-    
     localStorage.removeItem("jwt");
     setIsLoggedIn(false);
-    
+
     history.push("/signin");
   }
 
   return (
-    
     <CurrentUserContext.Provider value={currentUser}>
       <div className="page__content">
         <Header email={email} onSignOut={onSignOut} />
@@ -202,28 +193,12 @@ function App() {
           </Route>
         </Switch>
         <Footer />
-        <EditProfilePopup
-          isOpen={isEditProfilePopupOpen}
-          onUpdateUser={handleUpdateUser}
-          onClose={closeAllPopups}
-        />
-        <AddPlacePopup
-          isOpen={isAddPlacePopupOpen}
-          onAddPlace={handleAddPlaceSubmit}
-          onClose={closeAllPopups}
-        />
+        <EditProfilePopup isOpen={isEditProfilePopupOpen} onUpdateUser={handleUpdateUser} onClose={closeAllPopups} />
+        <AddPlacePopup isOpen={isAddPlacePopupOpen} onAddPlace={handleAddPlaceSubmit} onClose={closeAllPopups} />
         <PopupWithForm title="Вы уверены?" name="remove-card" buttonText="Да" />
-        <EditAvatarPopup
-          isOpen={isEditAvatarPopupOpen}
-          onUpdateAvatar={handleUpdateAvatar}
-          onClose={closeAllPopups}
-        />
+        <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onUpdateAvatar={handleUpdateAvatar} onClose={closeAllPopups} />
         <ImagePopup card={selectedCard} onClose={closeAllPopups} />
-        <InfoTooltip
-          isOpen={isInfoToolTipOpen}
-          onClose={closeAllPopups}
-          status={tooltipStatus}
-        />
+        <InfoTooltip isOpen={isInfoToolTipOpen} onClose={closeAllPopups} status={tooltipStatus} />
       </div>
     </CurrentUserContext.Provider>
   );
