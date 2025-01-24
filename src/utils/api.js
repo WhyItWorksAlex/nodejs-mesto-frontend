@@ -130,6 +130,6 @@ class Api {
   }
 }
 // Замените на адрес вашего бэкенда
-const api = new Api("http://localhost:3000");
+const api = new Api("https://api.fishmanalex.students.nomorepartiesco.ru/");
 
 export default api;
